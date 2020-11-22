@@ -1,25 +1,117 @@
-include <lasercut/lasercut.scad>;
+include <laserlib/laserlib.scad>;
 
-mt = 6; //material thickness
-height = 100;
-width = 180;
-depth = 150;
-glass_radius = 50; // ø100
-inner_tube_radius = 35;
 
-clip_height = 30;
+thickness = 6; // thikness
 
-lcd_size = [50,20];
+$flatPack = false;  // Toggle for whether or not to flatpack you build
+$spaceing = 2;     // When flatpacking 
 
-$fn=60;
-thickness = 3.1;
-x = 50;
-y = 100;
 
-*box();
-*light_cylinder();
+box_height = 100;
+box_width = 180;
+box_depth = 150;
 
-generate = 1;
+glass_inner_dia = 94.8; 
+glass_thickness = 2;
+glass_outer_dia = glass_inner_dia + 2*glass_thickness;
+glass_height = 183;
+
+
+light_dia = 83.5;
+light_height = 200;
+
+lcd_size = [71.1,24.1,4.5];
+psu_12_size = [130,98,31];
+psu_5_size = [95,50,28];
+
+fan_size = [60,60,25];
+fan_holes = 4.5;
+fan_holes_spaceing = 50;
+
+
+llFlatPack(x=0, sizes=[box_height, box_height, box_depth, box_depth, box_depth]){
+    *llPos([0,thickness,0],[90,0,0], thickness) front();
+    llPos([0,box_depth,0],[90,0,0], thickness) back();
+    llPos([thickness,0,0], [0,-90,0],thickness) sideL();
+    llPos([box_width,0,0], [0,-90,0],thickness) sideR();
+    llPos([0,0,box_height-thickness], [0,0,0],thickness) top();
+    *llPos([0,0,0], [0,0,0],thickness) bottom();
+}
+
+llFlatPack(x=box_width+$spaceing, sizes=[200]){
+    #llPos([0,0,box_height-thickness*2], [0,0,0], thickness)
+        glass_holder();
+}
+
+
+llIgnore(){
+}
+
+module front(){
+    llFingers(startPos=[0,0], length=box_width, angle=0, startCon=[0,0],edge="r")
+    llFingers(startPos=[0,box_height-thickness], length=box_width, angle=0, startCon=[0,0],edge="l")
+    llFingers(startPos=[0,0], length=box_height, angle=90, startCon=[2,2],edge="l",inverse=true)
+    llFingers(startPos=[box_width-thickness,0], length=box_height, angle=90, startCon=[2,2],edge="r")
+    llCutoutSquare([box_width,box_height]);
+}
+
+module sideL(){
+    llFingers(startPos=[0,0], length=box_height, angle=0, startCon=[2,2],edge="r")
+    llFingers(startPos=[0,box_depth-thickness], length=box_height, angle=0, startCon=[2,2],edge="l",inverse=true)
+    llFingers(startPos=[0,0], length=box_depth, angle=90, startCon=[0,0],edge="l")
+    llFingers(startPos=[box_height-thickness,0], length=box_depth, angle=90, startCon=[0,0],edge="r")
+    llCutoutSquare([box_height,box_depth]);
+}
+
+module sideR(){
+
+    llFingers(startPos=[0,0], length=box_height, angle=0, startCon=[2,2],edge="r",inverse=true)
+    llFingers(startPos=[0,box_depth-thickness], length=box_height, angle=0, startCon=[2,2],edge="l")
+    llFingers(startPos=[0,0], length=box_depth, angle=90, startCon=[0,0],edge="l")
+    llFingers(startPos=[box_height-thickness,0], length=box_depth, angle=90, startCon=[0,0],edge="r")
+    llCutoutSquare([box_height,box_depth]);
+}
+
+module back(){
+    llFingers(startPos=[0,0], length=box_width, angle=0, startCon=[0,0],edge="r")
+    llFingers(startPos=[0,box_height-thickness], length=box_width, angle=0, startCon=[0,0],edge="l")
+    llFingers(startPos=[0,0], length=box_height, angle=90, startCon=[2,2],edge="l")
+    llFingers(startPos=[box_width-thickness,0], length=box_height, angle=90, startCon=[2,2],edge="r",inverse=true)
+    llCutoutSquare([box_width,box_height]);
+}
+
+module top(){
+    // fingers for glass_holder
+    module fingersL(){
+        llFingers(startPos=[0,0], angle=90, length=box_depth, startCon=[1,1], edge="l");
+    }
+
+    llFingers(startPos=[0,0], angle=0, length=box_width, startCon=[1,1], edge="r")
+    llFingers(startPos=[0,0], angle=90, length=box_depth, startCon=[1,1], edge="l")
+    llFingers(startPos=[box_width-thickness,0], angle=90, length=box_depth, startCon=[1,1], edge="r")
+    llFingers(startPos=[0,box_depth-thickness], angle=0, length=box_width, startCon=[1,1], edge="l")
+    llCutoutSquare([box_width,box_depth]){
+        translate([box_width/2,box_depth/2,-1])cylinder(d=glass_outer_dia, h=thickness*2);
+    };
+}
+
+glass_holder_depth = glass_outer_dia+thickness*2;
+module glass_holder(){
+    llFingers(startPos=([0,0]), angle=90, length=box_depth, edge="l", startCon=[0,0], inverse=true)
+    llFingers(startPos=([box_width-thickness,0]), angle=90, length=box_depth, edge="r", startCon=[0,0],inverse=true)
+    translate([0,box_depth/2-glass_holder_depth/2])
+    llCutoutSquare([box_width,glass_holder_depth]){
+        translate([box_width/2,glass_holder_depth/2,-1]) cylinder(d=glass_inner_dia-4, h=thickness+2);
+    };
+}
+
+module bottom(){
+    llFingers(startPos=[0,0], angle=0, length=box_width, startCon=[1,1], edge="r")
+    llFingers(startPos=[0,0], angle=90, length=box_depth, startCon=[1,1], edge="l")
+    llFingers(startPos=[box_width-thickness,0], angle=90, length=box_depth, startCon=[1,1], edge="r")
+    llFingers(startPos=[0,box_depth-thickness], angle=0, length=box_width, startCon=[1,1], edge="l")
+    llCutoutSquare([box_width,box_depth]);
+}
 
 module light_cylinder(){
 translate([width/2,depth/2,mt])
@@ -27,21 +119,14 @@ translate([width/2,depth/2,mt])
 
 }
 
-module box(){
-   *top();
-    bottom();
-    sides();
-    front();
-    back();
-}
+
+
 
 module speaker_hole(){
     d = 50;
     r = d/2;
     n = 7;
     th = 2;
-    
-    
 
     difference(){
         cylinder(mt, d=d);
@@ -58,176 +143,4 @@ module speaker_hole(){
 }
 
 
-module top(){
-    translate([0,0,height])
-        lasercutoutSquare(
-            thickness=mt,
-            x = width,
-            y = depth,
-            finger_joints=[
-                [UP,0,5],
-                [LEFT,0,5],
-                [DOWN,0,5],
-                [RIGHT,0,5]],
-            circles_remove = [
-                [glass_radius,width/2,depth/2]
-            ]
-        );
-    
-    //glass holder insert. It has a 1mm tollerace around the edges.
-    mySize = glass_radius*2+20;
-    translate([1,1,height-mt])
-        lasercutoutSquare(
-            thickness = mt,
-            x = width-2,
-            y = depth-2,
-            circles_remove = [
-                [glass_radius-5,width/2-1,depth/2-1]
-            ],
-            slits = [
-                [DOWN,mt+mt/2-1,0,clip_height-1],
-                [DOWN,width-mt-mt/2-1,0,clip_height-1],
-                [UP,mt+mt/2-1,depth,clip_height-1],
-                [UP,width-mt-mt/2-1,depth,clip_height-1]
-            ]
-        );
-}
 
-
-module front()
-{
-    rotate([90,0,0]) 
-        lasercutoutSquare(
-            thickness = mt,
-            x = width,
-            y = height,
-            finger_joints = [
-                [UP,0,5],
-                [LEFT,1,5],
-                [DOWN,0,5],
-                [RIGHT,0,5]
-            ],
-            cutouts = [
-                [width/2-lcd_size[0]/2, height/2-lcd_size[1]/2, lcd_size[0], lcd_size[1]]
-            ],
-            simple_tabs = [
-                [0,width+mt/2,height],
-                [DOWN,-mt/2,0]
-            ]   
-        );
-    
-}
-
-module sides()
-{
-    translate([-mt,0,0])rotate([90,0,90])
-        lasercutoutSquare(
-            thickness = mt,
-            x = depth,
-            y = height,
-            finger_joints = [
-                [UP,1,5],
-                [LEFT,0,5],
-                [DOWN,1,5],
-                [RIGHT,1,5]
-            ],
-            simple_tabs = [
-                [0,-mt/2,height],
-                [DOWN,depth+mt/2,0]
-            ] 
-        );
-    translate([width,0,0])rotate([90,0,90])
-    lasercutoutSquare(
-        thickness = mt,
-        x = depth,
-        y = height,
-        finger_joints = [
-            [UP,0,5],
-            [LEFT,0,5],
-            [DOWN,0,5],
-            [RIGHT,1,5]
-        ],
-            simple_tabs = [
-                [0,depth+mt/2,height],
-                [DOWN,-mt/2,0]
-            ] 
-    );
-    //clips
-    translate([mt*2,0,0]) rotate([90,-90,-90])
-    lasercutoutSquare(
-        thickness = mt,
-        x = height,
-        y = clip_height,
-        clips = [
-            [LEFT,0,clip_height/2]
-        ]
-    );
-    translate([mt,depth,0]) rotate([90,-90,90])
-    lasercutoutSquare(
-        thickness = mt,
-        x = height,
-        y = clip_height,
-        clips = [
-            [LEFT,0,clip_height/2]
-        ]
-    );
-    translate([width-mt*2,depth,0]) rotate([90,-90,90])
-    lasercutoutSquare(
-        thickness = mt,
-        x = height,
-        y = clip_height,
-        clips = [
-            [LEFT,0,clip_height/2]
-        ]
-    );
-    translate([width-mt,0,0]) rotate([90,-90,-90])
-    lasercutoutSquare(
-        thickness = mt,
-        x = height,
-        y = clip_height,
-        clips = [
-            [LEFT,0,clip_height/2]
-        ]
-    );
-}
-
-module bottom(){
-    translate([0,0,-mt])
-        lasercutoutSquare(
-            thickness = mt,
-            x = width,
-            y = depth,
-            finger_joints=[
-                [UP,1,5],
-                [LEFT,1,5],
-                [DOWN,1,5],
-                [RIGHT,1,5]],
-            clip_holes = [
-                [RIGHT,mt*2,clip_height/2],
-                [RIGHT,mt*2,depth-clip_height/2],
-                [RIGHT,width-mt,depth-clip_height/2],
-                [RIGHT,width-mt,clip_height/2]
-            ]
-        );
-}
-
-module back(){
-    translate([0,depth+mt,0]) rotate([90,0,0])
-        lasercutoutSquare(
-           thickness = mt,
-            x = width,
-            y = height,
-            finger_joints = [
-                [UP,1,5],
-                [LEFT,1,5],
-                [DOWN,1,5],
-                [RIGHT,0,5]
-            ],
-            simple_tabs = [
-                [0,-mt/2,height],
-                [DOWN,width+mt/2,0]
-            ]
-
-        ); 
-        
-}
