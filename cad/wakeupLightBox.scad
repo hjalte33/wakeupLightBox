@@ -32,6 +32,9 @@ psu_12_size = [130,98,31];
 psu_5_size = [95,50,28];
 pi_size = [90,59,18];
 
+button_pad_x = 35;
+button_pad_y = 30;
+
 fan_size = [60,60,25];
 fan_holes = 4.5;
 fan_holes_spaceing = 50;
@@ -57,6 +60,22 @@ llFlatPack(x=box_width+box_height+2*$spaceing, sizes=[box_depth,light_holder_wid
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(1);
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(2);
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(3);
+
+}
+
+llFlatPack(x=-30,sizes=[30,30,30,30,30,30,30,30,30,30,30,30]){
+    s = 20;
+    llPos(th=thickness)feet(size=s, n=3, taper=20, i=0);
+    llPos(th=thickness)feet(size=s, n=3, taper=20, i=1);
+
+    llPos([box_width-s,0,0], th=thickness)feet(size=s, n=3, taper=20, i=0);
+    llPos([box_width-s,0,0], th=thickness)feet(size=s, n=3, taper=20, i=1);
+    
+    llPos([0,box_depth-s,0], th=thickness)feet(size=s, n=3, taper=20, i=0);
+    llPos([0,box_depth-s,0], th=thickness)feet(size=s, n=3, taper=20, i=1);
+
+    llPos([box_width-s,box_depth-s,0], th=thickness)feet(size=s, n=3, taper=20, i=0);
+    llPos([box_width-s,box_depth-s,0], th=thickness)feet(size=s, n=3, taper=20, i=1);
 
 }
 
@@ -231,6 +250,7 @@ module top(){
     llFingers(startPos=[0,box_depth-$th], angle=0, length=box_width, startCon=[1,1], edge="l")
     llCutoutSquare([box_width,box_depth]){
         translate([box_width/2,box_depth/2,-1])cylinder(d=glass_outer_dia, h=thickness*2);
+        translate([box_width-button_pad_x-1.5*$th,1.5*$th,-1])cube([button_pad_x,button_pad_y,100]);
     };
 }
 
@@ -269,6 +289,12 @@ module glassHolder(){
     llCutoutSquare([box_width,glass_holder_depth]){
         translate([box_width/2,glass_holder_depth/2,-1]) cylinder(d=glass_inner_dia-4, h=thickness+2);
     };
+}
+
+module feet(size, n, taper, i){
+        s = sin(taper)*i*$th;
+        echo(s);
+        translate([s/2,s/2,-i*$th-$th])cube([size-s,size-s,$th]);
 }
 
 
