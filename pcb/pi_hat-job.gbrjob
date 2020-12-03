@@ -1,0 +1,60 @@
+{
+  "Header":
+  {
+    "GenerationSoftware":
+    {
+      "Vendor":      "KiCad",
+      "Application": "Pcbnew",
+      "Version":     "(5.1.7-0-10_14)"
+    },
+    "CreationDate":  "2020-12-03T23:55:17+01:00"
+  },
+  "GeneralSpecs":
+  {
+    "ProjectId":
+    {
+      "Name": "pi_hat",
+      "GUID": "70695f68-6174-42e6-9b69-6361645f7063",
+      "Revision": "rev?"
+    },
+    "Size":
+    {
+      "X": 61.645,
+      "Y": 65.455
+    },
+    "LayerNumber": 2,
+    "BoardThickness":  1.600
+  },
+  "DesignRules":
+  [
+    {
+      "Layers": "Outer",
+      "PadToPad":  0.500,
+      "PadToTrack":  0.500,
+      "TrackToTrack":  0.500,
+      "MinLineWidth":  0.500,
+      "TrackToRegion":  0.600,
+      "RegionToRegion":  0.600
+    }
+  ],
+  "FilesAttributes":
+  [
+    {
+      "Path":  "pi_hat-B_Cu.gbr",
+      "FileFunction":  "Copper,L2,Bot",
+      "FilePolarity":  "Positive"
+    },
+    {
+      "Path":  "pi_hat-Edge_Cuts.gbr",
+      "FileFunction":  "Profile",
+      "FilePolarity":  "Positive"
+    }
+  ],
+  "MaterialStackup":
+  [
+    {
+      "Type":  "Copper",
+      "Notes":  "Layer B.Cu"
+    }
+  ]
+}
