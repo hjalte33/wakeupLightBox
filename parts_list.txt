@@ -1,0 +1,12 @@
+Raspberry pi
+12v psu MEAN WELL LRS-100-12, 102 W
+5V  DCDC MEAN WELL PSD-15A-5
+Fan Noctua NF-A6x25 PWM 60 mm
+BME280 temperature sensor
+16x2 char LCD display I2C connection
+(4x4 button pad)
+6 buttons
+250 cm white LED
+125 cm RGB LED
+glass as top cover for the light
+diffuser sheet to cover the inside of glass.
