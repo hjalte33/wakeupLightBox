@@ -32,8 +32,8 @@ psu_12_size = [130,98,31];
 psu_5_size = [95,50,28];
 pi_size = [90,59,18];
 
-button_pad_x = 35;
-button_pad_y = 30;
+button_pad_x = 39.5;
+button_pad_y = 42;
 
 fan_size = [60,60,25];
 fan_holes = 4.5;
@@ -203,8 +203,12 @@ module back(){
     llFingers(startPos=[$th,0], length=box_height, angle=90, startCon=[2,2],edge="l")
     llFingers(startPos=[box_width,0], length=box_height, angle=90, startCon=[3,3],edge="r")
     llCutoutSquare([box_width,box_height]){
-        translate([30,30])fan_hole(dia = 30, gap=3, rings=5, tab_width=2);
+        translate([30,30])mirror([1,0,0])fan_hole(dia = 30, gap=3, rings=5, tab_width=2);
         translate([box_width-30,30])fan_hole(dia = 30, gap=3, rings=5, tab_width=2);
+        // wire hole
+        translate([64,0,0])cube([8,14,$th]);
+        // on-off button
+        translate([85,thickness+2])cube([20,13,$th]);
     };
 }
 
@@ -250,7 +254,7 @@ module top(){
     llFingers(startPos=[0,box_depth-$th], angle=0, length=box_width, startCon=[1,1], edge="l")
     llCutoutSquare([box_width,box_depth]){
         translate([box_width/2,box_depth/2,-1])cylinder(d=glass_outer_dia, h=thickness*2);
-        translate([box_width-button_pad_x-1.5*$th,1.5*$th,-1])cube([button_pad_x,button_pad_y,100]);
+        translate([box_width/2,thickness+10])buttons(n = 6, space = 20, button_dia=12);
     };
 }
 
@@ -293,7 +297,6 @@ module glassHolder(){
 
 module feet(size, n, taper, i){
         s = sin(taper)*i*$th;
-        echo(s);
         translate([s/2,s/2,-i*$th-$th])cube([size-s,size-s,$th]);
 }
 
@@ -318,5 +321,14 @@ module fan_hole(dia, rings=5, gap=5, tab_width=3){
 
 }
 
+
+module buttons(n = 5, space = 20, button_dia = 11){
+    l=(n-1)*space;
+
+    translate([-l/2,0])
+    for(i=[0:n-1]){ // 5 buttons
+        translate([i*space,0])cylinder(d=11, h=$th);
+    }
+}
 
 
