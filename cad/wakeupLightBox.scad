@@ -1,21 +1,21 @@
 include <laserlib/laserlib.scad>;
 
 
-thickness = 6; // thikness
-thickness2 = 3;
+thickness = 6.1; // thikness
+thickness2 = 3.1;
 
 
 $fa= $preview ? 12 : 1;
 $fs= $preview ? 1 : 0.1;
 
 
-$flatPack = false;  // Toggle for whether or not to flatpack you build
+$flatPack = true;  // Toggle for whether or not to flatpack you build
 $spaceing = 2;     // When flatpacking 
 $kerf=0.1;
 
 box_height = 120;
-box_width = 180;
-box_depth = 160;
+box_width = 190;
+box_depth = 170;
 
 glass_inner_dia = 94.8; 
 glass_thickness = 2;
@@ -23,7 +23,7 @@ glass_outer_dia = glass_inner_dia + 2*glass_thickness;
 glass_height = 182;
 
 
-light_dia = 63.5;
+light_dia = 63.3;
 light_height = 200;
 light_glass_gap = 8;
 
@@ -56,7 +56,7 @@ llFlatPack(x=box_width+box_height+2*$spaceing, sizes=[box_depth,light_holder_wid
     llPos([0,0,box_height-thickness*2], th=thickness)glassHolder();
     llPos([box_width/2,box_depth/2,baseOfLight], th=thickness)lightHolderTop();
     llPos([box_width/2,box_depth/2,baseOfLight-thickness2], th=thickness2)lightHolder();
-    llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(0);
+    llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(0, true);
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(1);
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(2);
     llPos([box_width/2 , box_depth/2, 0],th=thickness2)airDuctSides(3);
@@ -141,7 +141,7 @@ module lightHolder(){
     };
 }
 
-module airDuctSides(i){
+module airDuctSides(i, cutout = false){
 
     height2holder = baseOfLight + thickness;
     height = box_height - 2*thickness;
@@ -151,7 +151,12 @@ module airDuctSides(i){
     llFingers(startPos=[$th,0], angle=90, length=height, startCon=[2,2],specialWidths=[thickness,thickness+$th], edge="l", nFingers=5)
     llFingers(startPos=[light_holder_width,0], angle=90, length=height, startCon=[3,3],specialWidths=[thickness,thickness+$th], edge="r", nFingers=5)
     llFingers(startPos=[0,0], angle=0, length=light_holder_width, startCon=[0,0], edge="r", nFingers=5, holeWidth=thickness)
-    llCutoutSquare([light_holder_width,height]);
+    llCutoutSquare([light_holder_width,height]){
+        dia = light_holder_width;
+        if(cutout)translate([light_holder_width/2,height+dia/2.7])cylinder(d=dia, h=$th);
+        t = light_holder_width/9;
+        if(cutout)translate([light_holder_width-t,0])cube([t*2,thickness+5,$th]);
+    };
 
 }
 
@@ -203,12 +208,12 @@ module back(){
     llFingers(startPos=[$th,0], length=box_height, angle=90, startCon=[2,2],edge="l")
     llFingers(startPos=[box_width,0], length=box_height, angle=90, startCon=[3,3],edge="r")
     llCutoutSquare([box_width,box_height]){
-        translate([30,30])mirror([1,0,0])fan_hole(dia = 30, gap=3, rings=5, tab_width=2);
-        translate([box_width-30,30])fan_hole(dia = 30, gap=3, rings=5, tab_width=2);
+        translate([40,40])mirror([1,0,0])fan_hole(dia = 45, gap=2.5, rings=8, tab_width=2);
+        translate([box_width-40,40])fan_hole(dia = 45, gap=2.5, rings=8, tab_width=2);
         // wire hole
-        translate([64,0,0])cube([8,14,$th]);
+        translate([68,0,0])cube([8,14,$th]);
         // on-off button
-        translate([85,thickness+2])cube([20,13,$th]);
+        translate([box_width/2-10,thickness+3])cube([20,13,$th]);
     };
 }
 
@@ -281,7 +286,7 @@ module bottom(){
     llFingers(startPos=corners[2], endPos=corners[3], startCon=[1,1], nFingers=5, holeWidth=thickness2)
     llFingers(startPos=corners[3], endPos=corners[0], startCon=[1,1], nFingers=5, holeWidth=thickness2)
     llCutoutSquare([box_width,box_depth]){
-        translate([box_width/2, box_depth/2]) fan_hole(light_dia, gap=3, rings=10);
+        translate([box_width/2, box_depth/2]) fan_hole(light_holder_width-15, gap=3, rings=11, tab_width=2);
     };
 }
 
@@ -311,7 +316,7 @@ module fan_hole(dia, rings=5, gap=5, tab_width=3){
                 translate([0,0,-1])cylinder(d=inner_ring, $th+2);
                 for(j=[1:i+1]){
                     
-                    rotate(i*360/rings/3)rotate(360/(i+1) * j)translate([0,-tab_width/2,-1])cube([dia,tab_width,$th+2]);
+                    rotate(i*360/rings)rotate(360/(i+1) * j)translate([0,-tab_width/2,-1])cube([dia,tab_width,$th+2]);
                 }
                 
             }
