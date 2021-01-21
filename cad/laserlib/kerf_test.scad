@@ -1,7 +1,7 @@
 include <laserlib.scad>;
 
 
-thickness = 6; // thikness
+thickness = 3.1; // thikness
 
 $fa= $preview ? 12 : 1;
 $fs= $preview ? 1 : 0.1;
@@ -11,10 +11,10 @@ $fs= $preview ? 1 : 0.1;
 $flatPack = true;  // Toggle for whether or not to flatpack you build
 $spaceing = 2;     // When flatpacking 
 kerf_1 = 0.2;
-kerf_2 = 0.3;
+kerf_2 = 0.15;
 
 width = 100;
-depth = 40;
+depth = 20;
 
 
 llFlatPack(x=0, sizes = [depth,depth]){

@@ -11,7 +11,7 @@ $fs= $preview ? 1 : 0.1;
 
 $flatPack = true;  // Toggle for whether or not to flatpack you build
 $spaceing = 2;     // When flatpacking 
-$kerf=0.1;
+$kerf=0.15 ;
 
 box_height = 120;
 box_width = 190;
